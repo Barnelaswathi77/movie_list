@@ -1,95 +1,74 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+import React, { useState } from 'react';
+import Image from 'next/image'
+import Head from './Component/Header'
+import Movie_Row from './Component/Movie_row'
+import AddMovie from './Component/Addmovie'
+import Add_New_Movie from './Component/Add_new_movie'
+import MovieText from './Component/Movie_Text'
+import Foot from './Component/Footer'
+import styles from './page.module.css'
+import DummyValue from './Component/Dummy_Value'
+
+
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+	const [showForm, setShowForm] = useState(false);
+	const [movies, setMovies] = useState(DummyValue)
+	
+	const handleButtonClick = () => {
+    setShowForm(!showForm);
+	};
+	
+	const handleDeleteMovie = (id) => {
+    	const updatedMovies = movies.filter(movie => movie.id !== id);
+    	setMovies(updatedMovies);
+  	};
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+	const [vote, setVote] = useState(0);
+	const handleLike =(id)=>{
+		const Vote={...vote}
+		if (Vote[id]===undefined){
+			Vote[id]=1
+		}else{
+			Vote[id]+=1
+		}
+		setVote(Vote)
+	};
+	const handleDisLike=(id)=>{
+		const Vote={...vote}
+		if (Vote[id]===undefined){
+			Vote[id]=-1
+		}else{
+			Vote[id]-=1
+		}
+		setVote(Vote)
+	}
+	
+	
+  	
+  
+  	return (
+  		<>
+			<Head/>
+			<div className="Div_wtch">
+				<p className="Die_wtch_p">Watch</p>
+			</div>
+			
+			{movies.map((data) => (
+				<Movie_Row 
+					key={data.id} 
+					data={data} 
+					handleLike={() =>handleLike(data.id)} 
+					handleDisLike={() =>handleDisLike(data.id)} 
+					vote={vote[data.id]}
+					onDelete={() => handleDeleteMovie(data.id)} 
+				/>
+	  		))}
+	  		<MovieText/>
+			{showForm ? <AddMovie onDeleteButton={handleButtonClick} /> : <Add_New_Movie onClick={handleButtonClick} />}
+			
+			<Foot />
+  		</>
+  	);
 }
